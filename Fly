@@ -1,0 +1,44 @@
+local player = game.Players.LocalPlayer
+local button = script.Parent
+
+button.Text = "Ativar Voo (Teste Hack)"
+local flying = false
+local speed = 50
+local camera = workspace.CurrentCamera
+
+local bodyGyro
+local bodyVelocity
+
+local function startFlying()
+	local char = player.Character or player.CharacterAdded:Wait()
+	local hrp = char:WaitForChild("HumanoidRootPart")
+
+bodyGyro = Instance.new("BodyGyro")
+	bodyGyro.P = 9e4
+	bodyGyro.maxTorque = Vector3.new(9e9, 9e9, 9e9)
+	bodyGyro.CFrame = hrp.CFrame
+	bodyGyro.Parent = hrp
+
+bodyVelocity = Instance.new("BodyVelocity")
+	bodyVelocity.velocity = Vector3.zero
+	bodyVelocity.maxForce = Vector3.new(9e9, 9e9, 9e9)
+	bodyVelocity.Parent = hrp
+
+flying = true
+
+
+game:GetService("RunService").RenderStepped:Connect(function()
+		if flying and hrp and bodyVelocity and bodyGyro then
+			local moveDirection = Vector3.zero
+			moveDirection = camera.CFrame.LookVector * 1 -- Simples voo para frente
+			bodyVelocity.velocity = moveDirection * speed
+			bodyGyro.CFrame = camera.CFrame
+		end
+	end)
+end
+
+button.MouseButton1Click:Connect(function()
+	if not flying then
+		startFlying()
+	end
+end)
